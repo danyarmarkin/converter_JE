@@ -20,7 +20,7 @@ public class Session {
         mDate = date;
         mTime = time;
         mId = UUID.randomUUID();
-        mOutputPath = outputFolder + "/" + getFullName();
+        mOutputPath = outputFolder + getFullName();
         mCameras = new ArrayList<>();
     }
 
@@ -29,7 +29,7 @@ public class Session {
         mSessionId = sessionId;
         mDeviceAmount = deviceAmount;
         mId = UUID.randomUUID();
-        mOutputPath = outputFolder + "/" + getFullName();
+        mOutputPath = outputFolder + getFullName();
         mCameras = new ArrayList<>();
     }
 
@@ -79,5 +79,13 @@ public class Session {
             if (camera.equals(c)) return true;
         }
         return false;
+    }
+
+    public String getOutputPath() {
+        return mOutputPath;
+    }
+
+    public ArrayList<Camera> getCameras() {
+        return mCameras;
     }
 }

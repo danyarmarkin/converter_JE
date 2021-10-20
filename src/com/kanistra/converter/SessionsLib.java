@@ -30,6 +30,7 @@ public class SessionsLib extends ArrayList<Session> {
                 camera.getSessionId(),
                 camera.getDeviceAmount(),
                 camera.getFolder());
+        camera.setOutputPath(cameraSession.getOutputPath());
         for (Session session : this) {
             if (session.equals(cameraSession) && !session.containCamera(camera)) {
                 session.addCamera(camera);
@@ -40,5 +41,13 @@ public class SessionsLib extends ArrayList<Session> {
         }
         add(cameraSession);
         addCamera(camera);
+    }
+
+    public int camerasSize() {
+        int total = 0;
+        for (Session session : this) {
+            total += session.getCameras().size();
+        }
+        return total;
     }
 }

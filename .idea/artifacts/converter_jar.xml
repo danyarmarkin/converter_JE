@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="converter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/converter_jar</output-path>
+    <root id="archive" name="converter.jar">
+      <element id="module-output" name="converter" />
+      <element id="extracted-dir" path="/opt/homebrew/Cellar/opencv/4.5.3_2/share/java/opencv4/opencv-453.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
