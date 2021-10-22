@@ -68,6 +68,10 @@ public class CameraConverter extends Thread{
                     System.out.print(frame + " " + toleranceIndex + " ");
                     System.out.println(score);
                     toleranceIndex += 1;
+                    imageGray.release();
+                    destination.release();
+                    median.release();
+                    std.release();
                 }
                 if (index == tolerance) {
                     float maxImageScore = max(imagesScore);
@@ -93,12 +97,15 @@ public class CameraConverter extends Thread{
                     durationIndex += 1;
                     durationIndex %= durations.length;
                     toleranceIndex = 0;
+                    maxImage.release();
                 }
+                image.release();
                 index += 1;
                 index %= step;
                 success = videoCapture.read(image);
             }
-
+            image.release();
+            for (Mat mat : images) mat.release();
             for (CameraConverterListener listener : mListeners) listener.onConvertDone();
         }
     }

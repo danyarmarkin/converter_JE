@@ -10,6 +10,7 @@ public class AllSessionDetailsPanel extends JPanel {
 
     SessionsLib mSessionsLib;
 
+
     JLabel mTotalSessionsLabel;
     JLabel mTotalSessions;
     JLabel mTotalCamerasLabel;
