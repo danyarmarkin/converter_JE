@@ -25,6 +25,7 @@ public class Camera {
     ArrayList<ConvertDoneListener> mConvertDoneListeners = new ArrayList<>();
 
     public Camera(String path) {
+        path = path.replaceAll("\\\\", "/");
         mPath = path;
         String[] components = path.substring(0, path.length() - 4).split("/");
         String name = components[components.length - 1];
