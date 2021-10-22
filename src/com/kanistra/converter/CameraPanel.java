@@ -115,8 +115,8 @@ public class CameraPanel extends JPanel {
             void update() {
                 try {
                     int value = Integer.parseInt(mTolerance.getText());
-                    mCamera.setTolerance(value);
                     mTolerance.setBorder(mOutputPath.getBorder());
+                    mCamera.setTolerance(value);
                 } catch (NumberFormatException e) {
                     mTolerance.setBorder(new BevelBorder(0, Color.red, Color.red));
                 }
@@ -156,13 +156,13 @@ public class CameraPanel extends JPanel {
         mProgressLabel = new JLabel(Interface.FRAME_PROGRESS_TITLE);
         add(mProgressLabel);
 
-        mProgress = new JLabel("0 / " + mCamera.getOutputTotalFrames());
+        mProgress = new JLabel(mCamera.getConvertedFrames() + " / " + mCamera.getOutputTotalFrames());
         add(mProgress);
 
         mSpeedLabel = new JLabel(Interface.SPEED_TITLE);
         add(mSpeedLabel);
 
-        mSpeed = new JLabel("0");
+        mSpeed = new JLabel("0 fps");
         add(mSpeed);
 
         mTimeLabel = new JLabel(Interface.TIME_TITLE);
@@ -202,10 +202,12 @@ public class CameraPanel extends JPanel {
             mTolerance.setEnabled(!isStart);
             mSetAll.setEnabled(!isStart);
             mOutputPath.setEnabled(!isStart);
-            int time = Math.round((event.getOutputTotalFrames() - event.getConvertedFrames()) / event.getSpeed());
-            String zm = "0".repeat(2 - String.valueOf(time / 60).length());
-            String zs = "0".repeat(2 - String.valueOf(time % 60).length());
-            mTime.setText(zm + (time / 60) + ":" + zs + (time % 60));
+            if (event.getSpeed() > 0) {
+                int time = Math.round((event.getOutputTotalFrames() - event.getConvertedFrames()) / event.getSpeed());
+                String zm = "0".repeat(2 - String.valueOf(time / 60).length());
+                String zs = "0".repeat(2 - String.valueOf(time % 60).length());
+                mTime.setText(zm + (time / 60) + ":" + zs + (time % 60));
+            }
             mSpeed.setText(event.getSpeed() + " fps");
             mFrames.setText(event.getTotalFrames() + " -> " + event.getOutputTotalFrames());
             mProgress.setText(event.getConvertedFrames() + " / " + event.getOutputTotalFrames());

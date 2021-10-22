@@ -55,7 +55,7 @@ public class CameraConverter extends Thread{
 
             boolean success = videoCapture.read(image);
             while (success) {
-                if (!mCamera.isStartedConvert()) break;
+                if (!mCamera.isStartedConvert()) return;
                 if (index >= step - tolerance || index <= tolerance) {
                     images[toleranceIndex] = image;
                     Mat imageGray = new Mat();

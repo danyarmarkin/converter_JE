@@ -50,4 +50,10 @@ public class SessionsLib extends ArrayList<Session> {
         }
         return total;
     }
+
+    public void updateCameras() {
+        for (Session session : this) {
+            for (Camera camera : session.getCameras()) camera.registerEvent();
+        }
+    }
 }

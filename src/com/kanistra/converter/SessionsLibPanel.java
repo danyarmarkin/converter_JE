@@ -22,8 +22,8 @@ public class SessionsLibPanel extends JPanel implements MouseListener {
         setPreferredSize(new Dimension(Interface.SESSIONS_PANEL_WIDTH, Interface.SESSION_PANEL_HEIGHT * h));
         setBackground(Interface.NOT_SELECT_COLOR);
         setLayout(new GridLayout(0, 1, 0, 0));
-        mHeaderPanel = new AllSessionMonitoringBottomPanel("All sessions");
 
+        mHeaderPanel = new AllSessionMonitoringBottomPanel(mSessionsLib,"All sessions");
         add(mHeaderPanel);
 
         mSessionPanels = new ArrayList<>();

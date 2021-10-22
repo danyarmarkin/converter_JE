@@ -16,12 +16,13 @@ public class Camera {
     private boolean mJpg = false;
     private CameraConverter mCameraConverter;
     private int mConvertedFrames = 0;
-    private float mConvertedSpeed = 0;
-    private int mTotalFrames;
+    private float mConvertedSpeed = 0f;
+    private final int mTotalFrames;
     private int mOutputTotalFrames = 52;
 
     ArrayList<CameraDataListener> mCameraDataListeners = new ArrayList<>();
     ArrayList<UpdateProgressListener> mUpdateProgressListeners = new ArrayList<>();
+    ArrayList<ConvertDoneListener> mConvertDoneListeners = new ArrayList<>();
 
     public Camera(String path) {
         mPath = path;
@@ -81,6 +82,13 @@ public class Camera {
         for (UpdateProgressListener listener : mUpdateProgressListeners) listener.onUpdateProgress(this);
     }
 
+    public void setStep(int step, boolean update) {
+        mStep = step;
+        setOutputTotalFrames();
+        if (!update) return;
+        for (UpdateProgressListener listener : mUpdateProgressListeners) listener.onUpdateProgress(this);
+    }
+
     public int getTolerance() {
         return mTolerance;
     }
@@ -103,7 +111,10 @@ public class Camera {
                 @Override
                 public void onConvertDone() {
                     mStartedConvert = false;
+                    mConvertedFrames = mOutputTotalFrames;
+                    mConvertedSpeed = 0f;
                     registerEvent();
+                    for (ConvertDoneListener listener : mConvertDoneListeners) listener.onDone();
                 }
 
                 @Override
@@ -134,10 +145,6 @@ public class Camera {
 
     public int getConvertedFrames() {
         return mConvertedFrames;
-    }
-
-    public float getConvertedSpeed() {
-        return mConvertedSpeed;
     }
 
     public void addCameraDataListener(CameraDataListener listener) {
@@ -177,5 +184,13 @@ public class Camera {
 
     public int getOutputTotalFrames() {
         return mOutputTotalFrames;
+    }
+
+    public float getConvertedSpeed() {
+        return mConvertedSpeed;
+    }
+
+    public void addConvertDoneListener(ConvertDoneListener listener) {
+        mConvertDoneListeners.add(listener);
     }
 }

@@ -5,8 +5,6 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
-import java.io.File;
-import java.util.ArrayList;
 
 public class Interface extends JPanel {
 
@@ -48,6 +46,7 @@ public class Interface extends JPanel {
     public static final String FRAME_PROGRESS_TITLE = "Progress";
     public static final String START_ALL_CAMERAS_TITLE = "Start convert all cameras";
     public static final String STOP_ALL_CAMERAS_TITLE = "Stop convert all cameras";
+    public static final String THREADS_AMOUNT_TITLE = "Threads amount";
 
     public Interface(SessionsLib sessionsLib) {
         mSessionsLib = sessionsLib;
