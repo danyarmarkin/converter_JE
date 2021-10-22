@@ -1,12 +1,10 @@
 package com.kanistra.converter;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.text.BaseOCR;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
@@ -74,10 +72,11 @@ public class CameraConverter extends Thread{
                 if (index == tolerance) {
                     float maxImageScore = max(imagesScore);
                     Mat maxImage = images[index(imagesScore, maxImageScore)];
+                    String z = "0".repeat(4 - String.valueOf(frame).length());
                     System.out.println("max image " + index(imagesScore, maxImageScore) + " with score " + maxImageScore);
                     String extension = mCamera.isJpg()? ".jpg" : ".png";
                     Imgcodecs.imwrite(mCamera.getOutputPath() + "/" + mCamera.getSessionId() + "_" +
-                            mCamera.getDeviceIndex() + mCamera.getDeviceAmount() +"_" + frame + extension, maxImage);
+                            mCamera.getDeviceIndex() + mCamera.getDeviceAmount() +"_"+ z + frame + extension, maxImage);
                     frame += 1;
 
                     float duration = (System.currentTimeMillis() - mTime) / 1000f;
