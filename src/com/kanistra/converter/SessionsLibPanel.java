@@ -23,17 +23,18 @@ public class SessionsLibPanel extends JPanel implements MouseListener {
         setBackground(Interface.NOT_SELECT_COLOR);
         setLayout(new GridLayout(0, 1, 0, 0));
         mHeaderPanel = new AllSessionMonitoringBottomPanel("All sessions");
+
         add(mHeaderPanel);
 
         mSessionPanels = new ArrayList<>();
 
-        for (Session session : sessionsLib) {
+        for (Session session : mSessionsLib) {
             SessionPanel sessionPanel = new SessionPanel(session);
             mSessionPanels.add(sessionPanel);
             add(sessionPanel);
         }
 
-        for (int i = 0; i < minSessions - sessionsLib.size(); i++) {
+        for (int i = 0; i < minSessions - mSessionsLib.size(); i++) {
             JPanel panel = new JPanel();
             panel.setPreferredSize(new Dimension(Interface.SESSIONS_PANEL_WIDTH, Interface.SESSION_PANEL_HEIGHT));
             panel.setBackground(Interface.NOT_SELECT_COLOR);
@@ -42,6 +43,7 @@ public class SessionsLibPanel extends JPanel implements MouseListener {
 
         addMouseListener(this);
     }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {

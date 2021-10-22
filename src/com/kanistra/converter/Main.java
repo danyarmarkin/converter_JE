@@ -4,6 +4,8 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
+import javax.swing.*;
+
 public class Main {
 
     static SessionsLib mSessionsLib;
@@ -13,8 +15,19 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        try {
+            System.out.println(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         Mat mat = Mat.eye(3, 3, CvType.CV_8UC1);
-        System.out.println("mat = " + mat.dump());
         mSessionsLib = new SessionsLib();
 //        mSessionsLib.addCamera(new Camera("goodMan_EDDS23_13.mov"));
 //        mSessionsLib.addCamera(new Camera("goodMan_EDDS23_23.mov"));

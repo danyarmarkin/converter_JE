@@ -5,10 +5,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 public class CameraPanel extends JPanel {
     Camera mCamera;
@@ -25,14 +22,25 @@ public class CameraPanel extends JPanel {
     JTextField mTolerance;
     JLabel mJpgLabel;
     JCheckBox mJpg;
+    JButton mSetAll;
+    JLabel mSpeedLabel;
+    JLabel mSpeed;
+    JLabel mTimeLabel;
+    JLabel mTime;
+    JLabel mFramesLabel;
+    JLabel mFrames;
+    JLabel mProgressLabel;
+    JLabel mProgress;
+
+    ArrayList<SetParamsListener> mListeners = new ArrayList<>();
 
     public CameraPanel(Camera camera) {
         mCamera = camera;
         setBackground(Color.white);
         setPreferredSize(new Dimension(
-                Interface.WINDOW_WIDTH - Interface.SESSIONS_PANEL_WIDTH,
+                Interface.WINDOW_WIDTH - Interface.SESSIONS_PANEL_WIDTH - 20,
                 Interface.SESSION_DETAILS_PANEL_HEIGHT));
-        setLayout(new GridLayout(6, 2));
+        setLayout(new GridLayout(11, 2));
 
         mInputPathLabel = new JLabel(Interface.INPUT_PATH_TITLE);
         add(mInputPathLabel);
@@ -73,6 +81,8 @@ public class CameraPanel extends JPanel {
                     int value = Integer.parseInt(mStep.getText());
                     mCamera.setStep(value);
                     mStep.setBorder(mOutputPath.getBorder());
+                    mFrames.setText(mCamera.getTotalFrames() + " -> " + mCamera.getOutputTotalFrames());
+                    mProgress.setText(mCamera.getConvertedFrames() + " / " + mCamera.getOutputTotalFrames());
                 } catch (NumberFormatException e) {
                     mStep.setBorder(new BevelBorder(0, Color.red, Color.red));
                 }
@@ -121,10 +131,45 @@ public class CameraPanel extends JPanel {
         mJpg = new JCheckBox();
         mJpg.setSelected(mCamera.isJpg());
         mJpg.addItemListener(e -> {
-            boolean value = mJpg.isEnabled();
+            boolean value = mJpg.isSelected();
             mCamera.setJpg(value);
         });
         add(mJpg);
+
+        mSetAll = new JButton(Interface.SET_ALL_TITLE);
+        mSetAll.addActionListener(e -> {
+            for (SetParamsListener listener : mListeners) {
+                listener.onSetParamsToAllCameras(mCamera);
+            }
+        });
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.white);
+        add(panel);
+        add(mSetAll);
+
+        mFramesLabel = new JLabel(Interface.FRAMES_TITLE);
+        add(mFramesLabel);
+
+        mFrames = new JLabel(mCamera.getTotalFrames() + " -> "  + mCamera.getOutputTotalFrames());
+        add(mFrames);
+
+        mProgressLabel = new JLabel(Interface.FRAME_PROGRESS_TITLE);
+        add(mProgressLabel);
+
+        mProgress = new JLabel("0 / " + mCamera.getOutputTotalFrames());
+        add(mProgress);
+
+        mSpeedLabel = new JLabel(Interface.SPEED_TITLE);
+        add(mSpeedLabel);
+
+        mSpeed = new JLabel("0");
+        add(mSpeed);
+
+        mTimeLabel = new JLabel(Interface.TIME_TITLE);
+        add(mTimeLabel);
+
+        mTime = new JLabel("infinity");
+        add(mTime);
 
         mStartButton = new JButton(Interface.START_BUTTON_TITLE);
         if (mCamera.isStartedConvert()) mStartButton.setEnabled(false);
@@ -144,5 +189,39 @@ public class CameraPanel extends JPanel {
             mStopButton.setEnabled(false);
             mCamera.setStartedConvert(false);
         });
+
+
+        mCamera.addCameraDataListener(event -> {
+            boolean isStart = event.isStartedConvert();
+            mStep.setText(String.valueOf(event.getStep()));
+            mTolerance.setText(String.valueOf(event.getTolerance()));
+            mJpg.setSelected(event.isJpg());
+            mStartButton.setEnabled(!isStart);
+            mStopButton.setEnabled(isStart);
+            mStep.setEnabled(!isStart);
+            mTolerance.setEnabled(!isStart);
+            mSetAll.setEnabled(!isStart);
+            mOutputPath.setEnabled(!isStart);
+            int time = Math.round((event.getOutputTotalFrames() - event.getConvertedFrames()) / event.getSpeed());
+            String zm = "0".repeat(2 - String.valueOf(time / 60).length());
+            String zs = "0".repeat(2 - String.valueOf(time % 60).length());
+            mTime.setText(zm + (time / 60) + ":" + zs + (time % 60));
+            mSpeed.setText(event.getSpeed() + " fps");
+            mFrames.setText(event.getTotalFrames() + " -> " + event.getOutputTotalFrames());
+            mProgress.setText(event.getConvertedFrames() + " / " + event.getOutputTotalFrames());
+        });
     }
+
+    public void addSetParamListener(SetParamsListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void updateParams(Camera camera) {
+        mStep.setText(String.valueOf(camera.getStep()));
+        mTolerance.setText(String.valueOf(camera.getTolerance()));
+        mJpg.setSelected(camera.isJpg());
+        mFrames.setText(camera.getTotalFrames() + " -> " + camera.getOutputTotalFrames());
+        mProgress.setText(camera.getConvertedFrames() + " / " + camera.getOutputTotalFrames());
+    }
+
 }

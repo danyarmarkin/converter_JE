@@ -29,8 +29,8 @@ public class AllSessionDetailsPanel extends JPanel {
 
     public AllSessionDetailsPanel(SessionsLib sessionsLib) {
         mSessionsLib = sessionsLib;
-        setLayout(new GridLayout(0, 2));
-        int width = Interface.WINDOW_WIDTH - Interface.SESSIONS_PANEL_WIDTH - 10;
+        setLayout(new GridLayout(15, 2));
+        int width = Interface.WINDOW_WIDTH - Interface.SESSIONS_PANEL_WIDTH - 20;
         int height = Interface.WINDOW_HEIGHT;
         setPreferredSize(new Dimension(width, height));
 
@@ -88,8 +88,8 @@ public class AllSessionDetailsPanel extends JPanel {
         mTime = new JLabel("0 sec");
         add(mTime);
 
-        JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(width, 500));
-        add(panel);
+//        JPanel panel = new JPanel();
+//        panel.setPreferredSize(new Dimension(width, 500));
+//        add(panel);
     }
 }

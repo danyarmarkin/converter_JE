@@ -1,6 +1,5 @@
 package com.kanistra.converter;
 
-import javax.print.attribute.standard.JobHoldUntil;
 import javax.swing.*;
 import java.awt.*;
 
@@ -21,7 +20,16 @@ public class AllSessionMonitoringBottomPanel extends JPanel {
         mProgressBar.setMaximum(100);
         mProgressBar.setMinimum(0);
         mProgressBar.setValue(50);
+        mProgressBar.setForeground(Color.orange);
         mProgressBar.setPreferredSize(new Dimension(Interface.SESSIONS_PANEL_WIDTH - 40, 10));
         add(mProgressBar, BorderLayout.WEST);
     }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        if (mLabel != null) mLabel.setBackground(bg);
+        if (mProgressBar != null) mProgressBar.setBackground(bg);
+    }
+
 }

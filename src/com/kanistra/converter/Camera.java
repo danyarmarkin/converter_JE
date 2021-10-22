@@ -1,26 +1,27 @@
 package com.kanistra.converter;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 public class Camera {
-    private String mObjectName;
-    private String mSessionId;
-    private int mDeviceAmount;
-    private int mDeviceIndex;
-    private String mPath;
+    private final String mObjectName;
+    private final String mSessionId;
+    private final int mDeviceAmount;
+    private final int mDeviceIndex;
+    private final String mPath;
     private String mOutputPath;
     private int mStep = 10;
     private int mTolerance = 0;
     private boolean mStartedConvert = false;
     private boolean mJpg = false;
     private CameraConverter mCameraConverter;
+    private int mConvertedFrames = 0;
+    private float mConvertedSpeed = 0;
+    private int mTotalFrames;
+    private int mOutputTotalFrames = 52;
 
-    public Camera(String objectName, String sessionId, int deviceAmount, int deviceIndex, String path) {
-        mObjectName = objectName;
-        mSessionId = sessionId;
-        mDeviceAmount = deviceAmount;
-        mDeviceIndex = deviceIndex;
-        this.mPath = path;
-        mCameraConverter = new CameraConverter(this);
-    }
+    ArrayList<CameraDataListener> mCameraDataListeners = new ArrayList<>();
+    ArrayList<UpdateProgressListener> mUpdateProgressListeners = new ArrayList<>();
 
     public Camera(String path) {
         mPath = path;
@@ -32,6 +33,8 @@ public class Camera {
         mDeviceAmount = Integer.parseInt(components[2]) % 10;
         mDeviceIndex = (int) Math.floor(Integer.parseInt(components[2]) / 10f);
         mCameraConverter = new CameraConverter(this);
+        mTotalFrames = CameraConverter.getFramesAmount(this);
+        setOutputTotalFrames();
     }
 
     public String getFolder() {
@@ -74,6 +77,8 @@ public class Camera {
 
     public void setStep(int step) {
         mStep = step;
+        setOutputTotalFrames();
+        for (UpdateProgressListener listener : mUpdateProgressListeners) listener.onUpdateProgress(this);
     }
 
     public int getTolerance() {
@@ -90,8 +95,24 @@ public class Camera {
 
     public void setStartedConvert(boolean startedConvert) {
         mStartedConvert = startedConvert;
-        if (mStartedConvert == true) {
+        if (mStartedConvert) {
             mCameraConverter = new CameraConverter(this);
+            mConvertedFrames = 0;
+            mConvertedSpeed = 0;
+            mCameraConverter.addCameraConverterListener(new CameraConverterListener() {
+                @Override
+                public void onConvertDone() {
+                    mStartedConvert = false;
+                    registerEvent();
+                }
+
+                @Override
+                public void onNewFrame(ConvertEventData eventData) {
+                    mConvertedFrames = eventData.getFrameIndex();
+                    mConvertedSpeed = 1.0f / eventData.getDuration();
+                    registerEvent();
+                }
+            });
             mCameraConverter.start();
         }
     }
@@ -109,5 +130,52 @@ public class Camera {
                 mSessionId.equals(camera.getSessionId()) &&
                 mDeviceAmount == camera.getDeviceAmount() &&
                 mDeviceIndex == camera.getDeviceIndex();
+    }
+
+    public int getConvertedFrames() {
+        return mConvertedFrames;
+    }
+
+    public float getConvertedSpeed() {
+        return mConvertedSpeed;
+    }
+
+    public void addCameraDataListener(CameraDataListener listener) {
+        mCameraDataListeners.add(listener);
+    }
+
+    public void addUpdateProgressListener(UpdateProgressListener listener) {
+        mUpdateProgressListeners.add(listener);
+    }
+
+    public int getTotalFrames() {
+        return mTotalFrames;
+    }
+
+    public void registerEvent() {
+        try {
+            for (UpdateProgressListener listener : mUpdateProgressListeners) listener.onUpdateProgress(this);
+        } catch (ConcurrentModificationException e) {
+            e.printStackTrace();
+        }
+
+        for (CameraDataListener listener : mCameraDataListeners) listener.onDataChanged(
+                new CameraDataChangeEvent(mStep,
+                        mTolerance,
+                        mJpg,
+                        mConvertedFrames,
+                        mOutputTotalFrames,
+                        mTotalFrames,
+                        mConvertedSpeed,
+                        mStartedConvert));
+
+    }
+
+    public void setOutputTotalFrames() {
+        mOutputTotalFrames = (mTotalFrames - 1) / mStep + 1;
+    }
+
+    public int getOutputTotalFrames() {
+        return mOutputTotalFrames;
     }
 }

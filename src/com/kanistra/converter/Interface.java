@@ -2,6 +2,11 @@ package com.kanistra.converter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.*;
+import java.io.File;
+import java.util.ArrayList;
 
 public class Interface extends JPanel {
 
@@ -18,8 +23,9 @@ public class Interface extends JPanel {
     public static final int WINDOW_HEIGHT = 720;
     public static final String WINDOW_TITLE = "Kanistra Video Converter";
     public static final int SESSIONS_PANEL_WIDTH = 300;
-    public static final int SESSION_PANEL_HEIGHT = 50;
-    public static final int SESSION_DETAILS_PANEL_HEIGHT = 250;
+    public static final int SESSION_PANEL_HEIGHT = 40;
+    public static final int SESSION_DETAILS_PANEL_HEIGHT = 370;
+    public static final int ALL_CAMERAS_PANEL_HEIGHT = 120;
 
     public static final Color SELECT_COLOR = new Color(47, 101, 202);
     public static final Color NOT_SELECT_COLOR = Color.lightGray;
@@ -36,7 +42,12 @@ public class Interface extends JPanel {
     public static final String TOTAL_SESSIONS_TITLE = "Total sessions";
     public static final String TOTAL_CAMERAS_TITLE = "Total cameras";
     public static final String SPEED_TITLE = "Speed";
-    public static final String TIME_TITLE = "Time";
+    public static final String TIME_TITLE = "Remaining Time";
+    public static final String SET_ALL_TITLE = "Set this params to all cameras in session";
+    public static final String FRAMES_TITLE = "Frames";
+    public static final String FRAME_PROGRESS_TITLE = "Progress";
+    public static final String START_ALL_CAMERAS_TITLE = "Start convert all cameras";
+    public static final String STOP_ALL_CAMERAS_TITLE = "Stop convert all cameras";
 
     public Interface(SessionsLib sessionsLib) {
         mSessionsLib = sessionsLib;
@@ -44,6 +55,52 @@ public class Interface extends JPanel {
         setLayout(new BorderLayout());
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         mainFrame.add(this, BorderLayout.CENTER);
+
+        new DropTarget(mainFrame, new DropTargetListener() {
+            @Override
+            public void dragEnter(DropTargetDragEvent dtde) {
+
+            }
+
+            @Override
+            public void dragOver(DropTargetDragEvent dtde) {
+
+            }
+
+            @Override
+            public void dropActionChanged(DropTargetDragEvent dtde) {
+
+            }
+
+            @Override
+            public void dragExit(DropTargetEvent dte) {
+
+            }
+
+            @Override
+            public void drop(DropTargetDropEvent dtde) {
+                dtde.acceptDrop(DnDConstants.ACTION_LINK);
+                Transferable transferable = dtde.getTransferable();
+                DataFlavor[] flavors = transferable.getTransferDataFlavors();
+                for (DataFlavor flavor : flavors) {
+                    try {
+                        if (flavor.isFlavorJavaFileListType()) {
+                            String data = transferable.getTransferData(flavor).toString();
+                            data = data.substring(1, data.length() - 1);
+                            String[] files = data.split(", ");
+                            for (String file : files) {
+                                System.out.println(file);
+                                mSessionsLib.addCamera(new Camera(file));
+                                loadInterface();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                dtde.dropComplete(true);
+            }
+        });
 
         loadInterface();
 
@@ -78,6 +135,8 @@ public class Interface extends JPanel {
                 loadSessionDetailsPanel();
             }
         });
+
+
         JScrollPane sessionsLibScrollPane = new JScrollPane(mSessionsLibPanel);
         sessionsLibScrollPane.setHorizontalScrollBar(null);
         add(sessionsLibScrollPane, BorderLayout.LINE_START);
@@ -98,6 +157,11 @@ public class Interface extends JPanel {
             mSessionDetailsPanel = new SessionDetailsPanel(mCurrentSession);
         }
         JScrollPane camerasScrollPane = new JScrollPane(mSessionDetailsPanel);
+        if (mCurrentSession == null) {
+            JPanel panel = new JPanel();
+            panel.setPreferredSize(new Dimension(WINDOW_WIDTH - SESSIONS_PANEL_WIDTH - 20, 400));
+            camerasScrollPane.add(panel);
+        }
         camerasScrollPane.setHorizontalScrollBar(null);
         add(camerasScrollPane, BorderLayout.LINE_END);
 
