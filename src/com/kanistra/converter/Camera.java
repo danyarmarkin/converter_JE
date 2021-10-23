@@ -194,4 +194,5 @@ public class Camera {
     public void addConvertDoneListener(ConvertDoneListener listener) {
         mConvertDoneListeners.add(listener);
     }
+
 }

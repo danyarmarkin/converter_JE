@@ -5,6 +5,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AllSessionDetailsPanel extends JPanel {
 
@@ -160,7 +161,33 @@ public class AllSessionDetailsPanel extends JPanel {
         add(mThreadsAmountLabel);
 
         mThreadsAmount = new JTextField();
-        mThreadsAmount.setText("3");
+        mThreadsAmount.setText(String.valueOf(mSessionsLib.getThreadsAmount()));
+        mThreadsAmount.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            void update() {
+                try {
+                    int value = Integer.parseInt(mThreadsAmount.getText());
+                    mSessionsLib.setThreadsAmount(value);
+                    mThreadsAmount.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+                } catch (NumberFormatException e) {
+                    mThreadsAmount.setBorder(new BevelBorder(0,Color.red, Color.red));
+                }
+            }
+        });
         add(mThreadsAmount);
 
         mOutputAmountFramesLabel = new JLabel(Interface.OUTPUT_AMOUNT_FRAMES_TITLE);
@@ -170,7 +197,7 @@ public class AllSessionDetailsPanel extends JPanel {
         add(mOutputAmountFrames);
 
         mStartButton = new JButton(Interface.START_BUTTON_TITLE);
-        mStartButton.addActionListener(e -> new ConverterQueue(mSessionsLib, Integer.parseInt(mThreadsAmount.getText())));
+        mStartButton.addActionListener(e -> new ConverterQueue(mSessionsLib, mSessionsLib.getThreadsAmount()));
         add(mStartButton);
 
         mStopButton = new JButton(Interface.STOP_BUTTON_TITLE);
@@ -199,9 +226,13 @@ public class AllSessionDetailsPanel extends JPanel {
 
         for (Session session : mSessionsLib) {
             for (Camera camera : session.getCameras()) {
-                camera.addCameraDataListener(event -> updateParams(false, false));
+                camera.addCameraDataListener(event -> {
+                    updateParams(false, false);
+                    repaint();
+                });
             }
         }
+        repaint();
     }
 
     public void updateParams(boolean withStep, boolean withTolerance) {
@@ -255,4 +286,33 @@ public class AllSessionDetailsPanel extends JPanel {
         mTime.setText(zm + (time / 60) + ":" + zs + (time % 60));
 
     }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.red);
+        ArrayList<float[]> coords = mSessionsLib.getSpeedCoords();
+        int height = 150;
+        int width = 250;
+        float eWidth = ((float) getWidth() - 50) / width;
+        float max = 0;
+        for (float[] i : coords) {
+            if (i[1] > max) max = i[1];
+        }
+        int ind = 0;
+        int start = coords.size() - width;
+        if (start <= 0) start = 1;
+        for (int i = start; i < coords.size() - 2; i++) {
+            float a = coords.get(i)[1] + coords.get(i - 1)[1] + coords.get(i + 1)[1];
+            float b = coords.get(i + 1)[1] + coords.get(i)[1] + coords.get(i + 2)[1];
+            a /= 3;
+            b /= 3;
+            int h1 = Math.round(( a / max) * height);
+            int h2 = Math.round(( b / max) * height);
+            g.drawLine(Math.round(ind * eWidth), getHeight() - h1, Math.round((ind + 1) * eWidth), getHeight() - h2);
+            ind += 1;
+        }
+    }
+
 }

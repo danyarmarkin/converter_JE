@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class SessionsLib extends ArrayList<Session> {
+
+    int mThreadsAmount = 3;
+    ArrayList<float[]> mSpeedCoords = new ArrayList<>();
+
     public Session getSessionById(UUID id) {
         for (Session session : this) {
             if (id == session.getId()) return session;
@@ -34,6 +38,7 @@ public class SessionsLib extends ArrayList<Session> {
         for (Session session : this) {
             if (session.equals(cameraSession) && !session.containCamera(camera)) {
                 session.addCamera(camera);
+                camera.addCameraDataListener(event -> addSpeedCoord(new float[]{0f, event.getSpeed()}));
                 return;
             } else if (session.containCamera(camera)) {
                 return;
@@ -55,5 +60,21 @@ public class SessionsLib extends ArrayList<Session> {
         for (Session session : this) {
             for (Camera camera : session.getCameras()) camera.registerEvent();
         }
+    }
+
+    public int getThreadsAmount() {
+        return mThreadsAmount;
+    }
+
+    public void setThreadsAmount(int threadsAmount) {
+        mThreadsAmount = threadsAmount;
+    }
+
+    void addSpeedCoord(float[] coord) {
+        mSpeedCoords.add(coord);
+    }
+
+    public ArrayList<float[]> getSpeedCoords() {
+        return mSpeedCoords;
     }
 }
