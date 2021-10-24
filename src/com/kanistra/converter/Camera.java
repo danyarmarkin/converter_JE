@@ -19,6 +19,12 @@ public class Camera {
     private float mConvertedSpeed = 0f;
     private final int mTotalFrames;
     private int mOutputTotalFrames = 52;
+    private int mJpgQuality = 100;
+    private boolean mJpgOptimize = false;
+    private boolean mJpgProgressive = false;
+    private int mJpgLumaQuality = 0;
+    private int mJpgChromaQuality = 0;
+    private int mJpgRstInterval = 0;
 
     ArrayList<CameraDataListener> mCameraDataListeners = new ArrayList<>();
     ArrayList<UpdateProgressListener> mUpdateProgressListeners = new ArrayList<>();
@@ -195,4 +201,51 @@ public class Camera {
         mConvertDoneListeners.add(listener);
     }
 
+    public int getJpgQuality() {
+        return mJpgQuality;
+    }
+
+    public void setJpgQuality(int jpgQuality) {
+        mJpgQuality = jpgQuality;
+    }
+
+    public boolean isJpgOptimize() {
+        return mJpgOptimize;
+    }
+
+    public void setJpgOptimize(boolean jpgOptimize) {
+        mJpgOptimize = jpgOptimize;
+    }
+
+    public boolean isJpgProgressive() {
+        return mJpgProgressive;
+    }
+
+    public void setJpgProgressive(boolean jpgProgressive) {
+        mJpgProgressive = jpgProgressive;
+    }
+
+    public int getJpgLumaQuality() {
+        return mJpgLumaQuality;
+    }
+
+    public void setJpgLumaQuality(int jpgLumaQuality) {
+        mJpgLumaQuality = jpgLumaQuality;
+    }
+
+    public int getJpgChromaQuality() {
+        return mJpgChromaQuality;
+    }
+
+    public void setJpgChromaQuality(int jpgChromaQuality) {
+        mJpgChromaQuality = jpgChromaQuality;
+    }
+
+    public int getJpgRstInterval() {
+        return mJpgRstInterval;
+    }
+
+    public void setJpgRstInterval(int jpgRstInterval) {
+        mJpgRstInterval = jpgRstInterval;
+    }
 }

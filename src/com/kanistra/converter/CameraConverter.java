@@ -3,6 +3,7 @@ package com.kanistra.converter;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.MatOfInt;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
@@ -53,6 +54,7 @@ public class CameraConverter extends Thread{
 
             boolean success = videoCapture.read(image);
             while (success) {
+                System.out.println(success);
                 if (!mCamera.isStartedConvert()) return;
                 if (index >= step - tolerance || index <= tolerance) {
                     images[toleranceIndex] = image;
@@ -79,10 +81,41 @@ public class CameraConverter extends Thread{
                     String z = "0".repeat(4 - String.valueOf(frame).length());
                     System.out.println("max image " + index(imagesScore, maxImageScore) + " with score " + maxImageScore);
                     String extension = mCamera.isJpg()? ".jpg" : ".png";
-                    Imgcodecs.imwrite(mCamera.getOutputPath() + "/" + mCamera.getSessionId() + "_" +
-                            mCamera.getDeviceIndex() + mCamera.getDeviceAmount() +"_"+ z + frame + extension, maxImage);
-                    frame += 1;
 
+                    ArrayList<Integer> p = new ArrayList<>();
+                    MatOfInt params = new MatOfInt();
+
+                    if (mCamera.isJpg()) {
+                        p.add(Imgcodecs.IMWRITE_JPEG_QUALITY);
+                        p.add(mCamera.getJpgQuality());
+
+                        p.add(Imgcodecs.IMWRITE_JPEG_OPTIMIZE);
+                        p.add(mCamera.isJpgOptimize()? 1 : 0);
+
+                        p.add(Imgcodecs.IMWRITE_JPEG_PROGRESSIVE);
+                        p.add(mCamera.isJpgProgressive()? 1 : 0);
+
+                        if (mCamera.getJpgLumaQuality() != 0) {
+                            p.add(Imgcodecs.IMWRITE_JPEG_LUMA_QUALITY);
+                            p.add(mCamera.getJpgLumaQuality());
+                        }
+
+                        if (mCamera.getJpgChromaQuality() != 0) {
+                            p.add(Imgcodecs.IMWRITE_JPEG_CHROMA_QUALITY);
+                            p.add(mCamera.getJpgChromaQuality());
+                        }
+
+                        if (mCamera.getJpgRstInterval() != 0) {
+                            p.add(Imgcodecs.IMWRITE_JPEG_RST_INTERVAL);
+                            p.add(mCamera.getJpgRstInterval());
+                        }
+
+                    }
+
+                    params.fromList(p);
+                    Imgcodecs.imwrite(mCamera.getOutputPath() + "/" + mCamera.getSessionId() + "_" +
+                            mCamera.getDeviceIndex() + mCamera.getDeviceAmount() +"_"+ z + frame + extension, maxImage, params);
+                    frame += 1;
                     float duration = (System.currentTimeMillis() - mTime) / 1000f;
                     durations[durationIndex] = duration;
                     float durationOut = 0;
@@ -103,6 +136,7 @@ public class CameraConverter extends Thread{
                 index += 1;
                 index %= step;
                 success = videoCapture.read(image);
+                if (!success) success = videoCapture.read(image);
             }
             image.release();
             for (Mat mat : images) mat.release();

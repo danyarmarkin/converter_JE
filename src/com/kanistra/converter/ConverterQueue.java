@@ -29,8 +29,4 @@ public class ConverterQueue{
             }
         }
     }
-
-    public int getThreadsAmount() {
-        return mThreadsAmount;
-    }
 }

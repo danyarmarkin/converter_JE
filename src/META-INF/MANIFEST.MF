@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Main-Class: com.kanistra.converter.Main
+Class-Path: opencv-453.jar
 

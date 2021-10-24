@@ -24,6 +24,18 @@ public class AllSessionDetailsPanel extends JPanel {
     JTextField mTolerance;
     JLabel mJpgLabel;
     JCheckBox mJpg;
+    JLabel mJpgQualityLabel;
+    JTextField mJpgQuality;
+    JLabel mJpgOptimizationLabel;
+    JCheckBox mJpgOptimization;
+    JLabel mJpgProgressiveLabel;
+    JCheckBox mJpgProgressive;
+    JLabel mJpgLumaQualityLabel;
+    JTextField mJpgLumaQuality;
+    JLabel mJpgChromaQualityLabel;
+    JTextField mJpgChromaQuality;
+    JLabel mJpgRstIntervalLabel;
+    JTextField mJpgRstInterval;
     JLabel mThreadsAmountLabel;
     JTextField mThreadsAmount;
     JLabel mOutputAmountFramesLabel;
@@ -39,9 +51,9 @@ public class AllSessionDetailsPanel extends JPanel {
 
     public AllSessionDetailsPanel(SessionsLib sessionsLib) {
         mSessionsLib = sessionsLib;
-        setLayout(new GridLayout(15, 2));
+        setLayout(new GridLayout(21, 2));
         int width = Interface.WINDOW_WIDTH - Interface.SESSIONS_PANEL_WIDTH - 20;
-        int height = Interface.WINDOW_HEIGHT;
+        int height = (int) (Interface.WINDOW_HEIGHT * 1.5f);
         setPreferredSize(new Dimension(width, height));
 
         mTotalSessionsLabel = new JLabel(Interface.TOTAL_SESSIONS_TITLE);
@@ -156,6 +168,42 @@ public class AllSessionDetailsPanel extends JPanel {
             }
         });
         add(mJpg);
+
+        mJpgQualityLabel = new JLabel(Interface.JPG_QUALITY_TITLE);
+        add(mJpgQualityLabel);
+
+        mJpgQuality = new JpgQualityTextField(mSessionsLib);
+        add(mJpgQuality);
+
+        mJpgOptimizationLabel = new JLabel(Interface.JPG_OPTIMIZE_TITLE);
+        add(mJpgOptimizationLabel);
+
+        mJpgOptimization = new JpgOptimizeCheckBox(mSessionsLib);
+        add(mJpgOptimization);
+
+        mJpgProgressiveLabel = new JLabel(Interface.JPG_PROGRESSIVE_TITLE);
+        add(mJpgProgressiveLabel);
+
+        mJpgProgressive = new JpgProgressiveCheckBox(mSessionsLib);
+        add(mJpgProgressive);
+
+        mJpgLumaQualityLabel = new JLabel(Interface.JPG_LUMA_QUALITY_TITLE);
+        add(mJpgLumaQualityLabel);
+
+        mJpgLumaQuality = new JpgLumaQualityTextField(mSessionsLib);
+        add(mJpgLumaQuality);
+
+        mJpgChromaQualityLabel = new JLabel(Interface.JPG_CHROMA_QUALITY_TITLE);
+        add(mJpgChromaQualityLabel);
+
+        mJpgChromaQuality = new JpgChromaQualityTextField(mSessionsLib);
+        add(mJpgChromaQuality);
+
+        mJpgRstIntervalLabel = new JLabel(Interface.JPG_RST_INTERVAL_TITLE);
+        add(mJpgRstIntervalLabel);
+
+        mJpgRstInterval = new JpgRstIntervalTextField(mSessionsLib);
+        add(mJpgRstInterval);
 
         mThreadsAmountLabel = new JLabel(Interface.THREADS_AMOUNT_TITLE);
         add(mThreadsAmountLabel);

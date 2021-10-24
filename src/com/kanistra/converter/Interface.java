@@ -47,6 +47,12 @@ public class Interface extends JPanel {
     public static final String START_ALL_CAMERAS_TITLE = "Start convert all cameras";
     public static final String STOP_ALL_CAMERAS_TITLE = "Stop convert all cameras";
     public static final String THREADS_AMOUNT_TITLE = "Threads amount";
+    public static final String JPG_QUALITY_TITLE = "Jpeg quality (0 - 100)";
+    public static final String JPG_OPTIMIZE_TITLE = "Jpeg optimize";
+    public static final String JPG_PROGRESSIVE_TITLE = "Jpeg progressive";
+    public static final String JPG_LUMA_QUALITY_TITLE = "Jpeg luma quality (0 - 100)";
+    public static final String JPG_CHROMA_QUALITY_TITLE = "Jpeg chroma quality (0 - 100)";
+    public static final String JPG_RST_INTERVAL_TITLE = "Jpeg Rst interval (0 - 65535)";
 
     public Interface(SessionsLib sessionsLib) {
         mSessionsLib = sessionsLib;
